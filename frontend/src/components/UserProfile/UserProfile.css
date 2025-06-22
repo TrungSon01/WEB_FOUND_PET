@@ -1,0 +1,149 @@
+.user-profile-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f7b42c 0%, #fc575e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.user-profile-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px #0002;
+  padding: 40px 32px 32px 32px;
+  min-width: 340px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: pop-in 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.7) translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.user-profile-avatar-wrap {
+  background: linear-gradient(135deg, #fc575e 0%, #f7b42c 100%);
+  border-radius: 50%;
+  padding: 5px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px #fc575e33;
+}
+
+.user-profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  background: #eee;
+}
+
+.user-profile-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #fc575e;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.user-profile-info {
+  width: 100%;
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.user-profile-info b {
+  color: #fc575e;
+  font-weight: 600;
+}
+
+.user-profile-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.user-profile-btn {
+  background: #fc575e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #fc575e22;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.user-profile-btn:hover {
+  background: #f7b42c;
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
+}
+
+.user-profile-btn-logout {
+  background: #222;
+  color: #fff;
+}
+
+.user-profile-btn-logout:hover {
+  background: #fc575e;
+}
+
+.user-profile-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #fc575e;
+  background: #fff7f0;
+}
+
+.user-profile-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #f7b42c;
+  border-top: 5px solid #fc575e;
+  border-radius: 50%;
+  margin-bottom: 18px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.user-profile-error {
+  color: #fff;
+  background: #fc575e;
+  padding: 24px 32px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  margin: 40px auto;
+  text-align: center;
+  max-width: 400px;
+}

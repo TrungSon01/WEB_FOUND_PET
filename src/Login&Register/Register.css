@@ -1,0 +1,51 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  width: 50vw;
+  background: #fff;
+  border-radius: 30px;
+}
+
+.register-form {
+  width: 360px;
+  text-align: center;
+}
+
+.register-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.ant-form-item .ant-input,
+.ant-form-item .ant-input-password {
+  border-radius: 999px;
+  padding: 10px 16px;
+  border: 1.5px solid #000;
+}
+
+.ant-input-prefix {
+  margin-right: 8px;
+}
+
+.register-button {
+  width: 100%;
+  background-color: black;
+  color: white;
+  border-radius: 999px;
+  height: 40px;
+  font-weight: 600;
+  border: none;
+}
+
+.register-button:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.switch-link {
+  margin-top: 16px;
+  font-size: 13px;
+}

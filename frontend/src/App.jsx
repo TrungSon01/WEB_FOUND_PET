@@ -1,18 +1,20 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./HomePage/HomePage";
-import LoginForm from "./Login&Register/LoginForm";
+import HomePage from "./Pages/HomePage/HomePage";
+import LoginForm from "./Pages/Login&Register/LoginForm";
 import { Toaster } from "react-hot-toast";
-import RegisterForm from "./Login&Register/RegisterForm";
+import RegisterForm from "./Pages/Login&Register/RegisterForm";
 import Loading from "./components/Loading/Loading";
 import Template from "./template/Template";
 import NotFoundPage from "./components/NotFoundPage/NotFoundPage";
-import PostForm from "./user/PostForm/PostForm";
+import PostForm from "./Pages/user/PostForm/PostForm";
 import ProfileUser from "./components/UserProfile/UserProfile";
-import SavedPostsPage from "./user/SavedPostsPage/SavedPostsPage";
+import SavedPostsPage from "./Pages/user/SavedPostsPage/SavedPostsPage";
 import React, { useRef } from "react";
 import Notification from "./components/Notification/Notification";
-import SearchPage from "./user/SearchPage/SearchPage";
+import SearchPage from "./Pages/user/SearchPage/SearchPage";
+import "@ant-design/v5-patch-for-react-19";
+import Message from "./Pages/Message/message";
 function App() {
   const homePageRef = useRef();
 
@@ -57,10 +59,14 @@ function App() {
             path="/saved-posts"
             element={<Template content={<SavedPostsPage />} />}
           />
-          <Route path="/search" element={<Template content={<SearchPage />} />} />
+          <Route
+            path="/search"
+            element={<Template content={<SearchPage />} />}
+          />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/notic" element={<Notification />} />
+          <Route path="/message" element={<Message></Message>} />
           <Route path="/*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

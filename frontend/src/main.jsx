@@ -2,6 +2,7 @@ import { Provider } from "react-redux";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
+import "@ant-design/v5-patch-for-react-19";
 
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./redux/userSlice";
@@ -22,9 +23,9 @@ createRoot(document.getElementById("root")).render(
       top: 16,
       getContainer: () => document.body, // Đảm bảo nằm trực tiếp trong body
     }}
-  > 
-  <Provider store={store}>
-    <App />
-  </Provider>
-    </ConfigProvider>
+  >
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ConfigProvider>
 );

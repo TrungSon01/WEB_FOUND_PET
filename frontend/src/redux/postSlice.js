@@ -5,11 +5,16 @@ const postSlice = createSlice({
   name: "postSlice",
   initialState: {
     posts: [],
+    savePost: [],
     loading: true,
   },
   reducers: {
     setPosts: (state, action) => {
       state.posts = action.payload;
+      state.loading = false;
+    },
+    setSavePosts: (state, action) => {
+      state.savePost = action.payload;
       state.loading = false;
     },
     deletePosts: (state, action) => {
@@ -23,5 +28,6 @@ const postSlice = createSlice({
   },
 });
 
-export const { setPosts, deletePosts, setLoading } = postSlice.actions;
+export const { setPosts, setSavePosts, deletePosts, setLoading } =
+  postSlice.actions;
 export default postSlice.reducer;

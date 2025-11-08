@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import { Popconfirm } from "antd";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -11,12 +12,18 @@ import "./HomePage.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setPosts, deletePosts, setLoading } from "../redux/postSlice";
-import { getPosts, deletePost, getComments, searchPosts } from "../apis/postFormService";
+import {
+  getPosts,
+  deletePost,
+  getComments,
+  searchPosts,
+} from "../apis/postFormService";
 import toast from "react-hot-toast";
 import PostItem from "../components/UserPosts/PostItem";
 import { getUserById } from "../apis/userService";
 import PostDetail from "../components/UserPosts/PostDetail";
 import Notification from "../components/Notification/Notification";
+
 const customIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [32, 32],
@@ -97,8 +104,6 @@ const HomePage = forwardRef(function HomePage(props, ref) {
     try {
       await deletePost(id);
       dispatch(deletePosts(id));
-      const updatedPosts = await getPosts();
-      dispatch(setPosts(updatedPosts));
       toast.success("Đã xóa bài đăng thành công");
     } catch (error) {
       console.error("Lỗi xóa bài đăng:", error);
@@ -202,12 +207,17 @@ const HomePage = forwardRef(function HomePage(props, ref) {
                   position={[post.latitude, post.longitude]}
                   icon={customIcon}
                 >
-                  <Popup >
+                  <Popup>
                     <b>{post.user_id}</b>
                     <br />
                     {post.description}
                     <br />
-                    <button className="post-detail-button" onClick={() => handlePostClick(post)}>Xem chi tiết</button>
+                    <button
+                      className="post-detail-button"
+                      onClick={() => handlePostClick(post)}
+                    >
+                      Xem chi tiết
+                    </button>
                   </Popup>
                 </Marker>
               )

@@ -8,7 +8,8 @@ const defaultAvatar =
 import { timeAgo } from "../../apis/postFormService";
 import PostDetail from "./PostDetail";
 import { getUserById } from "../../apis/userService";
-
+import { Popconfirm } from "antd";
+import "./PostHeader.css";
 export default function PostHeader({
   post,
   userEmail,
@@ -18,20 +19,22 @@ export default function PostHeader({
 }) {
   const [open, setOpen] = useState(false);
   const { user: currentUser } = useSelector((state) => state.userSlice);
-const[username, setUsername] = useState("");
- useEffect(() => {
+  const [username, setUsername] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  useEffect(() => {
     if (post?.user_id) {
       getUserById(post.user_id)
         .then((res) => {
-          setUsername(res.username); 
+          setUsername(res.username);
         })
         .catch((err) => {
           console.error("Lỗi khi lấy username:", err);
         });
     }
   }, [post?.user_id]);
-
-
+  const profileUser = () => {
+    alert("hello");
+  };
   return (
     <div className="post-header">
       <div className="post-avatar-block">
@@ -47,7 +50,10 @@ const[username, setUsername] = useState("");
           }}
         />
         <div>
-          <div className="post-author text-gray-700">
+          <div
+            className="post-author text-gray-700 hover:text-blue-500 hover:underline cursor-pointer"
+            onClick={() => profileUser()}
+          >
             {post?.username ||
               post?.author_name ||
               userEmail ||
@@ -64,19 +70,39 @@ const[username, setUsername] = useState("");
         </button>
         {open && (
           <div className="post-dropdown-menu">
-            <div className="post-dropdown-item" onClick={onEdit}>
+            <div
+              className="post-dropdown-item"
+              onClick={onEdit}
+              style={{ animationDelay: "0.05s" }}
+            >
               Chỉnh sửa
             </div>
             {post.user_id === currentUser?.user_id && (
-              <div
-                className="post-dropdown-item"
-                onClick={() => onDelete(post.post_id)}
+              <Popconfirm
+                title="Xóa bài đăng"
+                description="Bạn có chắc muốn xóa bài đăng này không?"
+                onConfirm={() => onDelete(post.post_id)}
+                okText="Có"
+                cancelText="Không"
+                okButtonProps={{ danger: true }}
               >
-                Xóa
-              </div>
+                <div
+                  style={{ animationDelay: "0.15s" }}
+                  className="post-dropdown-item text-red-600"
+                >
+                  Xóa
+                </div>
+              </Popconfirm>
             )}
-            <div className="post-dropdown-item">Chi tiết</div>
+
             <div
+              style={{ animationDelay: "0.25s" }}
+              className="post-dropdown-item"
+            >
+              Chi tiết
+            </div>
+            <div
+              style={{ animationDelay: "0.35s" }}
               className="post-dropdown-item"
               onClick={async (e) => {
                 e.stopPropagation(); // Prevent the post item click from being triggered

@@ -26,8 +26,8 @@ export const createPost = async (postData) => {
 
 export const deletePost = async (id) => {
   try {
-    const response = await https.delete(`/api/posts/${id}`);
-    return response.data;
+    const response = await https.delete(`/api/posts/${id}/`);
+    return response;
   } catch (err) {
     console.log("delete err", err);
     throw err;
@@ -67,7 +67,7 @@ export const savePost = async (postId) => {
       user_id: userId,
       post_id: postId,
     };
-    
+
     const response = await https.post(`/api/posts/${postId}/save/`, payload);
     return response.data;
   } catch (error) {
@@ -79,9 +79,8 @@ export const savePost = async (postId) => {
 export const getSavedPosts = async (userId) => {
   try {
     const response = await https.get(`/api/users/${userId}/save/posts/`);
-    
-    return response.data;
 
+    return response.data;
   } catch (error) {
     console.error("Error fetching saved posts:", error);
     throw error;

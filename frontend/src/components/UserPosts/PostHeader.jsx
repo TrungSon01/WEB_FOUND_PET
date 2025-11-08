@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { SlOptionsVertical } from "react-icons/sl";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import axios from "axios";
 const defaultAvatar =
   "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg";
 import { timeAgo } from "../../apis/postFormService";
@@ -21,6 +22,8 @@ export default function PostHeader({
   const { user: currentUser } = useSelector((state) => state.userSlice);
   const [username, setUsername] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
   useEffect(() => {
     if (post?.user_id) {
       getUserById(post.user_id)
@@ -31,10 +34,21 @@ export default function PostHeader({
           console.error("Lỗi khi lấy username:", err);
         });
     }
+    // console.log(post);
   }, [post?.user_id]);
-  const profileUser = () => {
-    alert("hello");
+
+  const profileUser = async (user_id) => {
+    try {
+      const res = await getUserById(user_id);
+      alert(`User ID: ${res.data.user_id} - Tên: ${res.data.username}`);
+      setUserInfo(res.data);
+      console.log(userInfo);
+    } catch (err) {
+      console.error("Lỗi khi lấy thông tin user:", err);
+      alert("Không thể lấy thông tin người dùng!");
+    }
   };
+
   return (
     <div className="post-header">
       <div className="post-avatar-block">
@@ -52,7 +66,7 @@ export default function PostHeader({
         <div>
           <div
             className="post-author text-gray-700 hover:text-blue-500 hover:underline cursor-pointer"
-            onClick={() => profileUser()}
+            onClick={() => profileUser(post.user_id)}
           >
             {post?.username ||
               post?.author_name ||

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router";
 import UserMenu from "../UserMenu/UserMenu";
 import Notification from "../Notification/Notification";
-import SearchPage from "../../user/SearchPage/SearchPage"; // Import component đã tách
+import SearchPage from "../../Pages/user/SearchPage/SearchPage"; // Import component đã tách
 
 const NavbarContainer = styled.div`
   position: fixed;

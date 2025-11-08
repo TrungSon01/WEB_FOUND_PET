@@ -3,15 +3,18 @@ FROM python:3.13.3
 # Tạo thư mục làm việc
 WORKDIR /code
 
-# Copy project
+# Copy requirements trước để tận dụng cache
+COPY requirements.txt .
+
+# Cài pip và các thư viện
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# Copy toàn bộ source code
 COPY . .
 
-# Cài pip và thư viện cần thiết
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
-# Mở port 8000 cho WebSocket/API
+# Mở port 8000
 EXPOSE 8000
 
-# Chạy Daphne ASGI server (thay vì runserver)
+# Lệnh chạy Daphne server
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "MyProject.asgi:application"]

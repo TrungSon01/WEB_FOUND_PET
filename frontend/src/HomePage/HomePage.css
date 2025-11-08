@@ -80,7 +80,7 @@
 }
 
 .post-item:hover {
-  background: #f9f9f9;
+  background: #efefef;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -208,7 +208,7 @@
 }
 
 .post-detail-button {
-  background: #FE9A00;
+  background: #fe9a00;
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -219,6 +219,5 @@
   margin-left: 10px;
 }
 .post-detail-button:hover {
-  background: rgba(225,113,0);
-
+  background: rgba(225, 113, 0);
 }

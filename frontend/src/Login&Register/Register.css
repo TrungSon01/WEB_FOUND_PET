@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50vh;
-  width: 50vw;
+  height: 66vh;
+  width: 62vw;
   background: #fff;
   border-radius: 30px;
 }
@@ -41,11 +41,24 @@
 }
 
 .register-button:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: #7f7f81 !important;
+  color: #fff !important;
 }
 
 .switch-link {
   margin-top: 16px;
   font-size: 13px;
+}
+
+.switch-link:hover {
+  color: #69b1ff;
+}
+
+.group::before {
+  transition: transform 0.7s ease-out, opacity 0.7s ease-out;
+}
+
+.group:hover::before {
+  transform: scaleY(1);
+  opacity: 1;
 }

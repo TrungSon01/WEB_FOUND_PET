@@ -1,19 +1,42 @@
-version: '3.9'
+version: "3.9"
 
 services:
   redis:
     image: redis:7.2
+    container_name: redis
     ports:
       - "6379:6379"
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: web_found_pet
+    container_name: web_found_pet_web
     command: daphne -b 0.0.0.0 -p 8000 MyProject.asgi:application
     volumes:
-      - .:/code
+      - .:/code:cached
     ports:
       - "8000:8000"
     depends_on:
       - redis
     environment:
       - DJANGO_SETTINGS_MODULE=MyProject.settings
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    image: web_found_pet_frontend
+    container_name: web_found_pet_frontend
+    volumes:
+      - ../../frontend:/app # để hot reload khi sửa code
+      - /app/node_modules # tránh lỗi node_modules overwrite
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    stdin_open: true
+    tty: true
+    depends_on:
+      - web
+    environment:
+      - HOST=0.0.0.0

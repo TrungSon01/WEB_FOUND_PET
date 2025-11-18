@@ -1,6 +1,6 @@
 // src/pages/SavedPosts/SavedPostsPage.jsx
 import React, { useEffect, useState } from "react";
-import { getSavedPosts } from "../../../apis/postFormService";
+import { deletePost, getSavedPosts } from "../../../apis/postFormService";
 import PostItem from "../../../components/UserPosts/PostItem";
 import {
   SavedPostsContainer,
@@ -9,8 +9,9 @@ import {
   PostWrapper,
 } from "./SavedPostsPage.styles";
 import { useDispatch, useSelector } from "react-redux";
-import { setSavePosts } from "../../../redux/postSlice";
+import { deletePosts, setSavePosts } from "../../../redux/postSlice";
 import { getUserById } from "../../../apis/userService";
+import toast from "react-hot-toast";
 
 const SavedPostsPage = () => {
   const [savedPosts, setSavedPosts] = useState([]);
@@ -79,6 +80,16 @@ const SavedPostsPage = () => {
     );
   }
 
+  const handleDelete = async (id) => {
+    try {
+      await deletePost(id);
+      dispatch(deletePosts(id));
+      toast.success("Đã xóa bài đăng thành công");
+    } catch (error) {
+      console.error("Lỗi xóa bài đăng:", error);
+      toast.error("Xóa bài đăng thất bại");
+    }
+  };
   return (
     <SavedPostsContainer>
       <Title>Bài viết đã lưu</Title>
@@ -92,6 +103,7 @@ const SavedPostsPage = () => {
                 post={post}
                 user={user}
                 userEmail={usersMap[post.user_id]?.email}
+                onDelete={handleDelete}
               />
             </PostWrapper>
           ))}

@@ -9,6 +9,7 @@ import { FaGoogle, FaFacebookF, FaInstagram, FaGithub } from "react-icons/fa";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import "./Login.css";
 import { hideLoading, showLoading } from "../../redux/loadingSlice";
+import { google_url_in_my_backend } from "../../common/url.common";
 // dispatch với use selector
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -41,7 +42,11 @@ export default function LoginPage() {
   const onFinish = (values) => {
     handleLogin(values.email, values.password);
   };
-
+  const handleSocialLogin = (type) => {
+    if (type === "google") {
+      window.location.href = google_url_in_my_backend;
+    }
+  };
   return (
     <div className="flex justify-center items-center h-screen ">
       <div className="login-container shadow shadow-gray-500 transition-shadow duration-300 hover:shadow-2xl hover:shadow-gray-500">

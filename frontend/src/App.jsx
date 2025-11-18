@@ -13,7 +13,6 @@ import SavedPostsPage from "./Pages/user/SavedPostsPage/SavedPostsPage";
 import React, { useRef } from "react";
 import Notification from "./components/Notification/Notification";
 import SearchPage from "./Pages/user/SearchPage/SearchPage";
-import "@ant-design/v5-patch-for-react-19";
 import Message from "./Pages/Message/message";
 function App() {
   const homePageRef = useRef();

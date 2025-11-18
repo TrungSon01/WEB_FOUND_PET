@@ -40,3 +40,4 @@ services:
       - web
     environment:
       - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true

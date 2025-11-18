@@ -1,0 +1,34 @@
+import 'dotenv/config';
+
+class App_Constant {
+  PORT = process.env.PORT;
+
+  GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+  GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+  GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
+
+  FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID;
+  FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET;
+  FACEBOOK_CALLBACK_URL = process.env.FACEBOOK_CALLBACK_URL;
+
+  GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+  GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+  GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL;
+
+  ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+  REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+
+
+  
+  ACCESS_TOKEN_SECRET_EXPIRES_IN =
+    process.env.ACCESS_TOKEN_SECRET_EXPIRES_IN || '10d';
+  REFRESH_TOKEN_SECRET_EXPIRES_IN =
+    process.env.REFRESH_TOKEN_SECRET_EXPIRES_IN || '30d';
+}
+
+// export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+// export const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN;
+// export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+// export const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN;
+
+export const app_constant = new App_Constant();

@@ -11,6 +11,7 @@ import PostDetail from "./PostDetail";
 import { getUserById } from "../../apis/userService";
 import { Popconfirm } from "antd";
 import "./PostHeader.css";
+import toast from "react-hot-toast";
 export default function PostHeader({
   post,
   userEmail,
@@ -123,9 +124,11 @@ export default function PostHeader({
                 setOpen(false); // Close the dropdown after clicking
                 try {
                   const response = await onSavePost(post.id || post.post_id);
-                  alert(response.message || "Bài viết đã được lưu thành công!");
+                  toast.success(
+                    response.message || "Bài viết đã được lưu thành công!"
+                  );
                 } catch (error) {
-                  alert("Lỗi khi lưu bài viết.");
+                  toast.error("Lỗi khi lưu bài viết.");
                 }
               }}
             >

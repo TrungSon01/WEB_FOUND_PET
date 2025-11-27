@@ -7,26 +7,46 @@
 
 ## 🧠 Công nghệ sử dụng
 
-| Công nghệ | Icon |
-|----------|-------|
-| **React** | <img src="https://skillicons.dev/icons?i=react" width="40" /> |
-| **Vite** | <img src="https://skillicons.dev/icons?i=vite" width="40" /> |
-| **TailwindCSS** | <img src="https://skillicons.dev/icons?i=tailwind" width="40" /> |
-| **CSS3** | <img src="https://skillicons.dev/icons?i=css" width="40" /> |
-| **Ant Design (Antd)** | <img src="https://skillicons.dev/icons?i=antd" width="40" /> |
-| **NestJS** | <img src="https://skillicons.dev/icons?i=nestjs" width="40" /> |
-| **Django** | <img src="https://skillicons.dev/icons?i=django" width="40" /> |
-| **MySQL** | <img src="https://skillicons.dev/icons?i=mysql" width="40" /> |
-| **SQLite** | <img src="https://skillicons.dev/icons?i=sqlite" width="40" /> |
-| **Docker** | <img src="https://skillicons.dev/icons?i=docker" width="40" /> |
-| **Prisma ORM** | <img src="https://skillicons.dev/icons?i=prisma" width="40" /> |
-| **Redis** | <img src="https://skillicons.dev/icons?i=redis" width="40" /> |
-| **JavaScript** | <img src="https://skillicons.dev/icons?i=js" width="40" /> |
-| **TypeScript** | <img src="https://skillicons.dev/icons?i=ts" width="40" /> |
-| **Socket.IO** | <img src="https://skillicons.dev/icons?i=socketio" width="40" /> |
-| **Google OAuth2** | <img src="https://skillicons.dev/icons?i=google" width="40" /> |
-| **Facebook OAuth2** | <img src="https://skillicons.dev/icons?i=facebook" width="40" /> |
-| **GitHub OAuth2** | <img src="https://skillicons.dev/icons?i=github" width="40" /> |
+### 🚀 Frontend
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white)
+![Ant Design](https://img.shields.io/badge/Ant_Design-0170FE?logo=antdesign&logoColor=white)
+![Socket.IO Client](https://img.shields.io/badge/Socket.IO_Client-010101?logo=socketdotio&logoColor=white)
+
+---
+
+### 🔴 Backend (NestJS)
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio&logoColor=white)
+![OAuth Google](https://img.shields.io/badge/Google_OAuth-4285F4?logo=google&logoColor=white)
+![OAuth Facebook](https://img.shields.io/badge/Facebook_OAuth-1877F2?logo=facebook&logoColor=white)
+![OAuth GitHub](https://img.shields.io/badge/GitHub_OAuth-000000?logo=github&logoColor=white)
+![OAuth Instagram](https://img.shields.io/badge/Instagram_OAuth-E4405F?logo=instagram&logoColor=white)
+
+---
+
+### 🟩 Backend (Django)
+![Django](https://img.shields.io/badge/Django-092E20?logo=django&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO_Server-010101?logo=socketdotio&logoColor=white)
+
+---
+### Database
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?logo=sqlite&logoColor=white)
+
+---
+
+### 🐳 Docker 
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-000000?logo=github&logoColor=white)
+
 
 
 ## 🛠 Backend & Frontend Stack

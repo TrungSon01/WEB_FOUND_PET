@@ -7,16 +7,16 @@ import {
 } from 'class-validator';
 
 export class CreateMessageDto {
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
   senderId: number;
 
-  @IsNotEmpty()
   @IsNumber()
+  @IsNotEmpty()
   receiverId: number;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   content: string;
 }
 

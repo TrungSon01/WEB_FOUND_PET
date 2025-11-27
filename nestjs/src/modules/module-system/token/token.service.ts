@@ -6,16 +6,22 @@ import { app_constant } from 'src/common/constant/app.constant';
 export class TokenService {
   constructor(private readonly jwtService: JwtService) {}
 
-  createTokens(user_id: number) {
-    const accessToken = this.jwtService.sign(
-      { user_id },
-      {
-        secret: app_constant.ACCESS_TOKEN_SECRET,
-        expiresIn: app_constant.ACCESS_TOKEN_SECRET_EXPIRES_IN as any,
-      },
-    );
+  createTokens(user: any) {
+    const payload = {
+      user_id: user.user_id,
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+      role: user.role,
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: app_constant.ACCESS_TOKEN_SECRET,
+      expiresIn: app_constant.ACCESS_TOKEN_SECRET_EXPIRES_IN as any,
+    });
+
     const refreshToken = this.jwtService.sign(
-      { user_id },
+      { user_id: user.user_id },
       {
         secret: app_constant.REFRESH_TOKEN_SECRET,
         expiresIn: app_constant.REFRESH_TOKEN_SECRET_EXPIRES_IN as any,
@@ -24,6 +30,7 @@ export class TokenService {
 
     return { accessToken, refreshToken };
   }
+
   verifyToken = (accessToken: string) => {
     return this.jwtService.verify(accessToken, {
       secret: app_constant.ACCESS_TOKEN_SECRET,

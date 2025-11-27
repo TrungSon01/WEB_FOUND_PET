@@ -14,6 +14,7 @@ import React, { useRef } from "react";
 import Notification from "./components/Notification/Notification";
 import SearchPage from "./Pages/user/SearchPage/SearchPage";
 import Message from "./Pages/Message/message";
+import LoginSuccess from "./Pages/Login&Register/LoginSuccess";
 function App() {
   const homePageRef = useRef();
 
@@ -66,6 +67,7 @@ function App() {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/notic" element={<Notification />} />
           <Route path="/message" element={<Message></Message>} />
+          <Route path="/login-success" element={<LoginSuccess />} />
           <Route path="/*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

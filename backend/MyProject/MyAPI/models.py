@@ -3,12 +3,13 @@ from math import radians, sin, cos, sqrt, atan2
 
 # Create your models here.
 class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
+    user_id = models.IntegerField(primary_key=True)
     username = models.CharField(max_length=100, blank=False)
-    email = models.EmailField(max_length=100, blank=False)
-    phone = models.CharField(max_length=20, blank=False)
-    password = models.CharField(max_length=255, blank=False)
-    role = models.BooleanField(default=False)
+    email = models.EmailField(max_length=100,blank=False,unique=True)
+    phone = models.CharField(max_length=20)
+    password = models.CharField(max_length=255)
+    role = models.CharField(max_length=50, default='user')
+
     
     def __str__(self):
         return "(" + str(self.user_id) + ")" + self.username

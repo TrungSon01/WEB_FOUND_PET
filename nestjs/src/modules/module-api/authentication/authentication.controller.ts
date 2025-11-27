@@ -13,7 +13,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { AuthenticationService } from './authentication.service';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
+import {
+  CreateAuthenticationDto,
+  Login_DTO,
+} from './dto/create-authentication.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
 
 @Controller('authentication')
@@ -29,8 +32,10 @@ export class AuthenticationController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Request() req: any, @Res() res: Response) {
-    await this.authenticationService.googleLogin(req);
-    return res.redirect(`http://localhost:5173`);
+    const tokens = await this.authenticationService.googleLogin(req);
+    return res.redirect(
+      `http://localhost:5173/login-success?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+    );
   }
 
   @Get('facebook')
@@ -61,8 +66,14 @@ export class AuthenticationController {
     await this.authenticationService.githubLogin(req);
     return res.redirect(`http://localhost:5173`);
   }
-  create(@Body() createAuthenticationDto: CreateAuthenticationDto) {
-    return this.authenticationService.create(createAuthenticationDto);
+  @Post('register')
+  register(@Body() createAuthenticationDto: CreateAuthenticationDto) {
+    return this.authenticationService.register(createAuthenticationDto);
+  }
+
+  @Post('login')
+  login(@Body() login: Login_DTO) {
+    return this.authenticationService.login(login);
   }
 
   @Get()

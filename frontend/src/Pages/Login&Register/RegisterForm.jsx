@@ -14,6 +14,7 @@ import "./Register.css";
 // let navigate = useNavigate();
 // const dispatch = useDispatch();
 import { registerService } from "../../apis/userService";
+import { registerServiceNest } from "../../apis/NestJS_api/userService";
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -35,17 +36,13 @@ const tailFormItemLayout = {
 const RegisterForm = ({ onSuccess }) => {
   const navigate = useNavigate();
   let handleRegister = (user, onSuccess) => {
-    console.log("user want register", user);
-    registerService(user)
-      .then((res) => {
-        console.log("register success", res);
-        toast.success("Đăng kí tài khoản thành công");
+    registerServiceNest(user)
+      .then(() => {
+        toast.success("Đăng ký thành công");
         navigate("/login");
-        if (onSuccess) onSuccess();
       })
-      .catch((err) => {
-        console.log("register failed", err);
-        toast.error("Đăng kí thất bại, lỗi lỗi lỗi ...");
+      .catch(() => {
+        toast.error("User đã tồn tại");
       });
   };
   const [form] = Form.useForm();
@@ -71,7 +68,7 @@ const RegisterForm = ({ onSuccess }) => {
               form={form}
               name="register"
               onFinish={onFinish}
-              initialValues={{ role: false }}
+              initialValues={{ role: "user" }}
               layout="vertical"
             >
               <Form.Item

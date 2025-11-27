@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
+import {
+  CreateAuthenticationDto,
+  Login_DTO,
+} from './dto/create-authentication.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
 import { PrismaService } from 'src/modules/module-system/prisma/prisma.service';
 import { TokenService } from 'src/modules/module-system/token/token.service';
 import { Prisma } from '@prisma/client';
-
+import { FunctionSystemService } from 'src/modules/module-system/function-system/function-system.service';
+import axios from 'axios';
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tokens: TokenService,
+    private readonly functionSystem: FunctionSystemService,
   ) {}
 
   async googleLogin(req: any) {
@@ -37,15 +42,14 @@ export class AuthenticationService {
       github_id,
       created_at,
       instagram_id,
-      role,
+      phone,
       updated_at,
-      password,
       ...userReturn
     } = userExist;
     console.log(userReturn);
-    return userExist;
 
-    // const tokens = this.tokens.createTokens(userExist.user_id);
+    const tokens = this.tokens.createTokens(userReturn);
+    return tokens;
     // console.log(tokens);
   }
 
@@ -122,10 +126,74 @@ export class AuthenticationService {
     const tokens = this.tokens.createTokens(userExist.user_id);
     return tokens;
   }
-  create(createAuthenticationDto: CreateAuthenticationDto) {
-    return 'This action adds a new authentication';
+
+  async register(user: CreateAuthenticationDto) {
+    const checkUserExist = await this.prisma.users.findFirst({
+      where: { email: user.email },
+    });
+
+    const isNew = !checkUserExist;
+
+    const finalUser = isNew
+      ? await this.prisma.users.create({ data: user })
+      : checkUserExist;
+
+    const userReturn =
+      this.functionSystem.returnUserWithoutSomeField(finalUser);
+
+    console.log('userReturn', userReturn);
+
+    // Sync sang backend Django (chỉ khi tạo user mới)
+    if (isNew) {
+      try {
+        await axios.post('http://localhost:8000/api/users/', {
+          user_id: userReturn.user_id,
+          username: userReturn.username,
+          phone: userReturn.phone,
+          password: userReturn.password,
+          email: userReturn.email,
+          role: 'user',
+        });
+        console.log('<==Sync Backend Django thành công==>');
+      } catch (error) {
+        console.error('Sync Backend Django thất bại: ==>', error.message);
+        // Có thể thêm logic retry hoặc log vào queue để sync sau
+      }
+    }
+    delete userReturn.password;
+    return {
+      success: isNew,
+      message: isNew ? 'Tạo tài khoản thành công' : 'Email đã được sử dụng',
+      user: userReturn,
+    };
   }
 
+  async login(login: Login_DTO) {
+    console.log(login);
+    if (!login) {
+      return {
+        user: null,
+        message: 'Dữ liệu đăng nhập không hợp lệ',
+        success: false,
+      };
+    }
+    const { email, password } = login;
+    const checkUserExist = await this.prisma.users.findFirst({
+      where: {
+        email: email,
+        password: password,
+      },
+    });
+    console.log('checkUsser exisst', checkUserExist);
+    if (!checkUserExist) {
+      return { user: null, message: 'user not in database', success: false };
+    } else {
+      const userReturn =
+        await this.functionSystem.returnUserWithoutSomeField(checkUserExist);
+
+      return { user: userReturn, message: 'user in database', success: true };
+    }
+  }
   findAll() {
     return `This action returns all authentication`;
   }

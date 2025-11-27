@@ -21,7 +21,6 @@ export default function Template({
         style={{
           marginLeft: "80px",
           height: "100vh",
-          overflow: "hidden",
         }}
       >
         {contentWithProps}

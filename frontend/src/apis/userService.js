@@ -1,14 +1,14 @@
 import axios from "axios";
 import { https } from "./config";
 
-export const loginService = async ({ email, password }) => {
+export const loginService = async (value) => {
   try {
     const response = await https.get(`/api/users/`);
     console.log("response", response);
     const users = response.data;
 
     const foundUser = users.find(
-      (user) => user.email === email && user.password === password
+      (user) => user.email === value.email && user.password === value.password
     );
 
     if (foundUser) {

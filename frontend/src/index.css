@@ -1,13 +1,18 @@
 html,
-body,
-#root {
-  height: 100%;
+body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  height: auto;
 }
 
 .main-layout {
   display: flex;
-  height: 100%;
+  min-height: 100vh;
 }
 
 .sidebar {
@@ -18,7 +23,8 @@ body,
 
 .content {
   flex: 1;
-  height: 100%;
+  min-height: 100vh;
   padding: 16px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

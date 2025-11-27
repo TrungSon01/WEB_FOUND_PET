@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('user_id', models.AutoField(primary_key=True, serialize=False)),
                 ('username', models.CharField(max_length=100)),
-                ('email', models.EmailField(max_length=100)),
+                ('email', models.EmailField(max_length=100, unique=True)),
                 ('phone', models.CharField(max_length=20)),
                 ('password', models.CharField(max_length=255)),
                 ('role', models.BooleanField(default=False)),

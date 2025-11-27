@@ -1,40 +1,84 @@
-// src/components/SearchPage/SearchPage.jsx
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
-const SearchContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 80px; /* Width of the Navbar */
-  height: 100vh;
-  width: 370px;
-  background-color: white;
-  border-right: 1px solid #ddd;
-  padding: 20px;
-  transform: translateX(${(props) => (props.show ? "0" : "-100%")});
-  transition: transform 0.5s ease-in-out;
-  z-index: 5;
-`;
+export default function SearchPage({
+  show,
+  query,
+  onChange,
+  onSubmit,
+  onClose,
+}) {
+  const location = useLocation();
+  const searchInputRef = useRef(null);
 
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-`;
+  useEffect(() => {
+    if (show && onClose) {
+      onClose();
+    }
+  }, [location.pathname]);
 
-export default function SearchPage({ show, query, onChange, onSubmit }) {
+  useEffect(() => {
+    if (show && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [show]);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && show && onClose) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [show, onClose]);
+
   return (
-    <SearchContainer show={show}>
-      <h4>Tìm kiếm bài đăng</h4>
-      <form onSubmit={onSubmit}>
-        <SearchInput
-          type="text"
-          placeholder="Tìm theo mô tả..."
-          value={query}
-          onChange={onChange}
-        />
-      </form>
-    </SearchContainer>
+    <>
+      <div
+        className={`fixed inset-0 bg-black/30 transition-all duration-300 z-[4] ${
+          show ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={onClose}
+      />
+
+      <div
+        className={`fixed top-0 left-20 h-screen w-[370px] bg-white border-r border-gray-200 p-5 transition-transform duration-500 ease-in-out z-[5] ${
+          show ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center mb-5">
+          <h4 className="text-lg font-semibold text-gray-800 m-0">
+            Tìm kiếm bài đăng
+          </h4>
+          <button
+            onClick={onClose}
+            className="bg-transparent border-none text-2xl text-gray-600 cursor-pointer w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-gray-100 hover:text-black"
+          >
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={onSubmit}>
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder="Tìm theo mô tả, tên thú cưng..."
+            value={query}
+            onChange={onChange}
+            className="w-full px-3 py-3 rounded-lg border border-gray-300 text-sm transition-all duration-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          />
+        </form>
+
+        {query && (
+          <div className="mt-4">
+            <p className="text-sm text-gray-500">
+              Đang tìm kiếm: <strong>{query}</strong>
+            </p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

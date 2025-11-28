@@ -48,6 +48,12 @@ export class UserService {
 
     return listUserSearchReturn;
   }
+
+  async uploadCloudAvatarUser(file: Express.Multer.File) {
+    console.log('file vào nestJS', file);
+    return true;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }

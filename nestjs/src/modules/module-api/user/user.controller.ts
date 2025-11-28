@@ -8,6 +8,9 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
+
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,18 +19,23 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  // detail user
   @Get()
   searchUser(@Query('username') username: string) {
     return this.userService.searchUser(username);
   }
 
+  // all user
   @Get()
   findAll() {
     return this.userService.findAll();
+  }
+
+  @Post('upload-cloud-avatar-user')
+  // vì Cloudinary không nhận file dạng “form-data thô” nên phải dùng cái này
+  @UseInterceptors(FileInterceptor('web_found_pet'))
+  uploadCloudAvatarUser(@UploadedFile() file: Express.Multer.File) {
+    return this.userService.uploadCloudAvatarUser(file);
   }
 
   @Get(':id')

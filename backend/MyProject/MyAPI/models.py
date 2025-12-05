@@ -5,10 +5,15 @@ from math import radians, sin, cos, sqrt, atan2
 class Users(models.Model):
     user_id = models.IntegerField(primary_key=True)
     username = models.CharField(max_length=100, blank=False)
-    email = models.EmailField(max_length=100,blank=False,unique=True)
-    phone = models.CharField(max_length=20)
-    password = models.CharField(max_length=255)
+    email = models.EmailField(max_length=100,null=True,blank=False,unique=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
+    avatar = models.CharField(max_length=255,default="")
     role = models.CharField(max_length=50, default='user')
+    facebook_id = models.CharField(max_length=255, null=True, blank=True)
+    google_id = models.CharField(max_length=255, null=True, blank=True)
+    github_id = models.CharField(max_length=255, null=True, blank=True)
+    instagram_id = models.CharField(max_length=255, null=True, blank=True)
 
     
     def __str__(self):

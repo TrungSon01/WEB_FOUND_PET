@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { PrismaService } from 'src/modules/module-system/prisma/prisma.service';
 
 export class CreateAuthenticationDto {
   @IsString()
@@ -20,6 +21,7 @@ export class CreateAuthenticationDto {
 }
 
 export class Login_DTO {
+  constructor(private readonly prisma: PrismaService) {}
   @IsNotEmpty()
   @IsString()
   email: string;

@@ -34,7 +34,7 @@ export default function UserMenu() {
       key: "1",
       label: (
         <span className="dropdown-item" style={{ animationDelay: "0.1s" }}>
-          Tên: {user?.email}
+          Tên: {user?.email || user.username}
         </span>
       ),
     },
@@ -47,7 +47,7 @@ export default function UserMenu() {
         <span
           className="dropdown-item"
           onClick={() => navigate("/profile")}
-          style={{ animationDelay: "0.25s" }}
+          style={{ animationDelay: "0.1s" }}
         >
           Hồ sơ cá nhân
         </span>
@@ -62,7 +62,7 @@ export default function UserMenu() {
         <span
           className="dropdown-item"
           onClick={() => navigate("/message")}
-          style={{ animationDelay: "0.4s" }}
+          style={{ animationDelay: "0.2s" }}
         >
           Message
         </span>
@@ -81,7 +81,7 @@ export default function UserMenu() {
             (window.location.href =
               "http://127.0.0.1:8000/admin/login/?next=/admin/")
           }
-          style={{ animationDelay: "0.55s" }}
+          style={{ animationDelay: "0.3s" }}
         >
           Trang quản lý
         </span>
@@ -98,7 +98,7 @@ export default function UserMenu() {
         <span
           className="dropdown-item"
           onClick={handleLogout}
-          style={{ animationDelay: "0.7s" }}
+          style={{ animationDelay: "0.4s" }}
         >
           Đăng xuất
         </span>

@@ -12,6 +12,7 @@ import { getUserById } from "../../apis/userService";
 import { Popconfirm } from "antd";
 import "./PostHeader.css";
 import toast from "react-hot-toast";
+import { CLOUNDINARY_IMAGE_URL } from "../../common/url/url.common";
 export default function PostHeader({
   post,
   userEmail,
@@ -24,12 +25,16 @@ export default function PostHeader({
   const [username, setUsername] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-
+  const [avatarUser, setAvatarUser] = useState("");
   useEffect(() => {
     if (post?.user_id) {
       getUserById(post.user_id)
         .then((res) => {
+          console.log("res", res);
           setUsername(res.username);
+          if (res.data.avatar !== "") {
+            setAvatarUser(`${CLOUNDINARY_IMAGE_URL}/${res.data.avatar}`);
+          }
         })
         .catch((err) => {
           console.error("Lỗi khi lấy username:", err);
@@ -54,7 +59,7 @@ export default function PostHeader({
     <div className="post-header">
       <div className="post-avatar-block">
         <img
-          src={defaultAvatar}
+          src={avatarUser || defaultAvatar}
           alt="avatar"
           className="avatar"
           style={{

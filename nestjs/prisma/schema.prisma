@@ -63,7 +63,7 @@ model Users {
   user_id          Int                @id @default(autoincrement())
   username         String             @db.VarChar(100)
   password         String?            @db.VarChar(255)
-  email            String             @unique(map: "email") @db.VarChar(255)
+  email            String?            @unique(map: "email") @db.VarChar(255)
   avatar           String?            @db.VarChar(255)
   phone            String?            @db.VarChar(20)
   role             Users_role?        @default(user)

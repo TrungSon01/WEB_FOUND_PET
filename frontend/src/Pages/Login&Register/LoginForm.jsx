@@ -35,7 +35,6 @@ export default function LoginPage() {
     try {
       console.log("Đang thử đăng nhập qua cả 2 backend...");
 
-      // Gọi cả 2 backend đồng thời với timeout
       const racePromises = [
         // NestJS với timeout 3s
         Promise.race([
@@ -76,10 +75,10 @@ export default function LoginPage() {
       const successResult = results.find((r) => r.success) || results[0];
 
       if (successResult.success) {
-        console.log(`✅ Đăng nhập thành công qua ${successResult.source}`);
+        console.log(`Đăng nhập thành công qua ${successResult.source}`);
         handleLoginSuccess(successResult.data);
       } else {
-        console.error("❌ Cả 2 backend đều thất bại:", results);
+        console.error("Cả 2 backend đều thất bại:", results);
         toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!");
       }
     } catch (error) {
@@ -94,10 +93,10 @@ export default function LoginPage() {
 
   const handleSocialLogin = (type) => {
     const socialUrls = {
-      google: "http://localhost:3001/auth/google",
-      facebook: "http://localhost:3001/auth/facebook",
-      github: "http://localhost:3001/auth/github",
-      instagram: "http://localhost:3001/auth/instagram",
+      google: "http://localhost:8001/api/authentication/google",
+      facebook: "http://localhost:8001/api/authentication/facebook",
+      github: "http://localhost:8001/api/authentication/github",
+      instagram: "http://localhost:8001/api/authentication/instagram",
     };
 
     if (socialUrls[type]) {

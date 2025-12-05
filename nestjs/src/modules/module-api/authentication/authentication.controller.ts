@@ -47,10 +47,9 @@ export class AuthenticationController {
   @Get('facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   async facebookAuthRedirect(@Request() req: any, @Res() res: Response) {
-    const { accessToken, refreshToken } =
-      await this.authenticationService.facebookLogin(req);
+    const tokens = await this.authenticationService.facebookLogin(req);
     return res.redirect(
-      `http://localhost:5173?accessToken=${accessToken}&refreshToken=${refreshToken}`,
+      `http://localhost:5173/login-success?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
     );
   }
 
@@ -63,8 +62,11 @@ export class AuthenticationController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubAuthRedirect(@Request() req: any, @Res() res: Response) {
-    await this.authenticationService.githubLogin(req);
-    return res.redirect(`http://localhost:5173`);
+    const { accessToken, refreshToken } =
+      await this.authenticationService.githubLogin(req);
+    return res.redirect(
+      `http://localhost:5173/login-success?accessToken=${accessToken}&refreshToken=${refreshToken}`,
+    );
   }
   @Post('register')
   register(@Body() createAuthenticationDto: CreateAuthenticationDto) {

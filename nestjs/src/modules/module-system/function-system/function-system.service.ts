@@ -6,15 +6,7 @@ export class FunctionSystemService {
     if (!user) {
       return false;
     }
-    const {
-      facebook_id,
-      github_id,
-      google_id,
-      updated_at,
-      created_at,
-      instagram_id,
-      ...userReturn
-    } = user;
+    const { updated_at, created_at, ...userReturn } = user;
 
     return userReturn;
   }

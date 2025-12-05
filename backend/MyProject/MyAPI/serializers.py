@@ -7,7 +7,17 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = '__all__'
-        
+        extra_kwargs = {
+            'phone': {'required': False, 'allow_null': True, 'allow_blank': True},
+            'password': {'required': False, 'allow_null': True, 'allow_blank': True},
+            'avatar': {'required': False, 'allow_blank': True},
+            'role': {'required': False},
+            'facebook_id': {'required': False},
+            'google_id': {'required': False},
+            'github_id': {'required': False},
+            'instagram_id': {'required': False},
+        }
+
 class PostsSerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField()
     

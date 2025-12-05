@@ -29,7 +29,9 @@ export default function Message() {
     setUserSearchQuery,
     showNewChatModal,
     setShowNewChatModal,
+    getAvatarUrl,
   } = useMessageProfile();
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
@@ -78,7 +80,16 @@ export default function Message() {
                 }`}
               >
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-lg">
-                  {conv.otherUser?.username?.charAt(0).toUpperCase() || "?"}
+                  <img
+                    src={getAvatarUrl(conv.otherUser?.avatar)}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                    alt=""
+                  />{" "}
                 </div>
                 <div className="ml-3 flex-1 overflow-hidden">
                   <h3 className="font-semibold text-gray-800 truncate">
@@ -98,13 +109,19 @@ export default function Message() {
       <div className="flex-1 flex flex-col">
         {selectedConversation ? (
           <>
-            <div className="bg-white border-b border-gray-200 p-4 flex items-center">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold">
-                {selectedConversation.otherUser?.username
-                  ?.charAt(0)
-                  .toUpperCase() || "?"}
+            <div className="bg-white border-b border-gray-200 p-2 flex items-center">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold ">
+                <img
+                  src={getAvatarUrl(selectedConversation.otherUser?.avatar)}
+                  style={{
+                    width: "90px",
+                    height: "80px",
+                    borderRadius: "50%",
+                    objectFit: "full",
+                  }}
+                />
               </div>
-              <div className="ml-3">
+              <div className="ml-6">
                 <h2 className="font-semibold text-gray-800">
                   {selectedConversation.otherUser?.username || "Unknown"}
                 </h2>

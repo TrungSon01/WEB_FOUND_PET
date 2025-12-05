@@ -33,9 +33,12 @@ export class UserController {
 
   @Post('upload-cloud-avatar-user')
   // vì Cloudinary không nhận file dạng “form-data thô” nên phải dùng cái này
-  @UseInterceptors(FileInterceptor('web_found_pet'))
-  uploadCloudAvatarUser(@UploadedFile() file: Express.Multer.File) {
-    return this.userService.uploadCloudAvatarUser(file);
+  @UseInterceptors(FileInterceptor('Web_Found_Pet_Avatar_User'))
+  uploadCloudAvatarUser(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('user_id') user_id: string,
+  ) {
+    return this.userService.uploadCloudAvatarUser(file, +user_id);
   }
 
   @Get(':id')

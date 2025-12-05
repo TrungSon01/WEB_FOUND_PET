@@ -26,6 +26,8 @@ class App_Constant {
     process.env.ACCESS_TOKEN_SECRET_EXPIRES_IN || '10d';
   REFRESH_TOKEN_SECRET_EXPIRES_IN =
     process.env.REFRESH_TOKEN_SECRET_EXPIRES_IN || '30d';
+
+  URL_LOGIN_DJANGO = 'http://localhost:8000/api/users/';
 }
 
 // export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;

@@ -7,7 +7,7 @@ import {
   onNewMessage,
   sendMessage,
 } from "../../../apis/NestJS_api/messageService";
-
+import { CLOUNDINARY_IMAGE_URL } from "../../../common/url/url.common";
 export default function useMessageProfile() {
   const [currentUserId, setCurrentUserId] = useState(1);
   const [conversations, setConversations] = useState([]);
@@ -20,8 +20,22 @@ export default function useMessageProfile() {
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const messagesEndRef = useRef();
-
   const selectedConversationRef = useRef(selectedConversation);
+
+  const checkAvatar = (avatar) => {
+    if (avatar === null) return "null";
+    const avatarUser = `${avatar}`;
+    console.log(avatarUser);
+    if (
+      avatarUser[0] == "h" &&
+      avatarUser[1] == "t" &&
+      avatarUser[2] == "t" &&
+      avatarUser[3] == "p"
+    ) {
+      return "google";
+    }
+    return "cloud";
+  };
 
   const user = localStorage.getItem("userAccount");
   const userJson = user ? JSON.parse(user) : null;
@@ -155,6 +169,15 @@ export default function useMessageProfile() {
     user.username?.toLowerCase().includes(userSearchQuery.toLowerCase())
   );
 
+  const getAvatarUrl = (avatar) => {
+    if (checkAvatar(avatar) == "cloud")
+      return `${CLOUNDINARY_IMAGE_URL}/${avatar}`; // true <==> cloud
+    else if (checkAvatar(avatar) == "google")
+      return avatar; // false <==> google
+    else if (checkAvatar(avatar) === "null")
+      return "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg";
+  };
+
   return {
     currentUserId,
     conversations,
@@ -180,5 +203,6 @@ export default function useMessageProfile() {
     setSelectedConversation,
     setUserSearchQuery,
     setShowNewChatModal,
+    getAvatarUrl,
   };
 }

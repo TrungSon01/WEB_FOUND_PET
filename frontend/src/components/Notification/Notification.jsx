@@ -8,20 +8,23 @@ import { notification } from "antd";
 import toast from "react-hot-toast";
 import { BellOutlined } from "@ant-design/icons";
 
-// Notification component: Hiển thị thông báo khi click chuông, dropdown xuất hiện bên phải chuông (dùng Portal)
-export default function Notification({ onNotificationClick }) {
+export default function Notification({
+  onNotificationClick,
+  className = "",
+  iconClassName = "",
+  iconSize = 22,
+}) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(false);
   const closeTimer = useRef(null);
   const bellRef = useRef(null);
-const [api, contextHolder] = notification.useNotification();
+  const [api, contextHolder] = notification.useNotification();
 
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
-  const ws = useRef(null); // Ref for WebSocket connection
+  const ws = useRef(null);
 
-  // Lấy danh sách thông báo từ backend (sẽ được gọi khi mở chuông hoặc khởi tạo)
   const fetchNotifications = async () => {
     const userAccount = JSON.parse(localStorage.getItem("userAccount") || "{}");
     const user_id = userAccount.user_id;
@@ -39,19 +42,37 @@ const [api, contextHolder] = notification.useNotification();
     }
   };
 
-  // Xử lý click chuông: mở/đóng dropdown và fetch nếu mở
+  // Tính toán vị trí dropdown thông minh
+  const calculateDropdownPosition = () => {
+    if (!bellRef.current) return;
+
+    const rect = bellRef.current.getBoundingClientRect();
+    const dropdownWidth = 380;
+    const dropdownMaxHeight = window.innerHeight - 80;
+
+    let top = rect.top + window.scrollY;
+    let left = rect.right + 8 + window.scrollX;
+
+    // Kiểm tra nếu dropdown vượt quá màn hình bên phải
+    if (left + dropdownWidth > window.innerWidth) {
+      left = rect.left + window.scrollX - dropdownWidth - 8;
+    }
+
+    // Kiểm tra nếu dropdown vượt quá màn hình bên dưới
+    if (top + dropdownMaxHeight > window.innerHeight + window.scrollY) {
+      top = Math.max(
+        40,
+        window.innerHeight + window.scrollY - dropdownMaxHeight - 20
+      );
+    }
+
+    setDropdownPos({ top, left });
+  };
+
   const handleBellClick = () => {
     if (!open) {
       fetchNotifications();
-      setTimeout(() => {
-        if (bellRef.current) {
-          const rect = bellRef.current.getBoundingClientRect();
-          setDropdownPos({
-            top: rect.top + window.scrollY,
-            left: rect.right + 8 + window.scrollX,
-          });
-        }
-      }, 0);
+      setTimeout(calculateDropdownPosition, 0);
       startAutoCloseTimer();
     } else {
       clearAutoCloseTimer();
@@ -59,18 +80,17 @@ const [api, contextHolder] = notification.useNotification();
     setOpen((prev) => !prev);
   };
 
-  // Xử lý click vào 1 thông báo
   const handleNotificationClick = (post_id) => {
     setOpen(false);
     if (onNotificationClick) onNotificationClick(post_id);
     clearAutoCloseTimer();
   };
 
-  // Tự động đóng dropdown sau 10s nếu không hover
   const startAutoCloseTimer = () => {
     clearAutoCloseTimer();
     closeTimer.current = setTimeout(() => setOpen(false), 10000);
   };
+
   const clearAutoCloseTimer = () => {
     if (closeTimer.current) {
       clearTimeout(closeTimer.current);
@@ -78,11 +98,9 @@ const [api, contextHolder] = notification.useNotification();
     }
   };
 
-  // Khi hover vào dropdown thì dừng timer, khi rời chuột thì restart timer
   const handleDropdownMouseEnter = () => clearAutoCloseTimer();
   const handleDropdownMouseLeave = () => startAutoCloseTimer();
 
-  // Đóng dropdown khi click ra ngoài
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e) => {
@@ -100,68 +118,62 @@ const [api, contextHolder] = notification.useNotification();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  // Kết nối WebSocket 
+  // WebSocket connection
   useEffect(() => {
     const userAccount = JSON.parse(localStorage.getItem("userAccount") || "{}");
     const user_id = userAccount.user_id;
 
     if (!user_id) return;
 
-    
     if (ws.current) {
       ws.current.close();
     }
 
-    
     ws.current = new WebSocket(
       `ws://localhost:8000/ws/notifications/${user_id}/`
     );
 
     ws.current.onopen = () => {
       console.log("WebSocket Connected");
-     
-      fetchNotifications(); // Fetch notifications on successful connection
+      fetchNotifications();
     };
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("Received WebSocket message:", data);
-     
+
       if (data.type === "notification_message") {
         setNotifications((prevNotifications) => {
-          // Thêm thông báo mới lên đầu danh sách
           const newNotifications = [data.message, ...prevNotifications];
           return newNotifications;
         });
-        setUnread((prevUnread) => prevUnread + 1); // Tăng số thông báo chưa đọc
+        setUnread((prevUnread) => prevUnread + 1);
       }
-     toast.success("bạn có thông báo mới");
-api.open({
-  message: (
-    <span className="text-white font-semibold flex items-center gap-2">
-      <BellOutlined className="text-yellow-400" />
-      Thông báo mới từ hệ thống
-    </span>
-  ),
-  description: (
-    <div className="text-gray-200">
-      {data.message.message || "Bạn có thông báo mới"}
-    </div>
-  ),
-  placement: "topRight",
-  duration: 6,
-  style: {
-    backgroundColor: "#374151", 
-    border: "1px solid #4b5563", 
-    boxShadow: "0 12px 24px rgba(0, 0, 0, 0.5)", 
-    borderRadius: "0.75rem", 
-    cursor: "pointer",
-    color: "white",
-  },
-  onClick: () => handleNotificationClick(data.message.post_id),
-});
-       
-
+      toast.success("bạn có thông báo mới");
+      api.open({
+        message: (
+          <span className="text-white font-semibold flex items-center gap-2">
+            <BellOutlined className="text-yellow-400" />
+            Thông báo mới từ hệ thống
+          </span>
+        ),
+        description: (
+          <div className="text-gray-200">
+            {data.message || "Bạn có thông báo mới"}
+          </div>
+        ),
+        placement: "topRight",
+        duration: 6,
+        style: {
+          backgroundColor: "#374151",
+          border: "1px solid #4b5563",
+          boxShadow: "0 12px 24px rgba(0, 0, 0, 0.5)",
+          borderRadius: "0.75rem",
+          cursor: "pointer",
+          color: "white",
+        },
+        onClick: () => handleNotificationClick(data.post_id),
+      });
     };
 
     ws.current.onclose = () => {
@@ -172,15 +184,14 @@ api.open({
       console.error("WebSocket Error:", error);
     };
 
-    // Clean up function: Close WebSocket connection when component unmounts
     return () => {
       if (ws.current) {
         ws.current.close();
       }
     };
-  }, []); // Dependency array: Re-run when user_id changes, or once on mount
+  }, []);
 
-  // Tạo node portal nếu chưa có
+  // Tạo portal node
   useEffect(() => {
     let portal = document.getElementById("notification-portal");
     if (!portal) {
@@ -190,60 +201,66 @@ api.open({
     }
   }, []);
 
+  // Recalculate position on window resize
+  useEffect(() => {
+    if (!open) return;
+    const handleResize = () => calculateDropdownPosition();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [open]);
+
   return (
     <>
-     {contextHolder}
-    <div className="notification-wrap">
-      <button
-        className="notification-bell"
-        onClick={handleBellClick}
-        ref={bellRef}
-      >
-        <FaBell size={22} />
-        {unread > 0 && <span className="notification-badge">{unread}</span>}
-      </button>
-      {open &&
-        createPortal(
-          <div
-            className="notification-dropdown-right animate-fade-in"
-            style={{
-              position: "absolute",
-              top: dropdownPos.top,
-              left: dropdownPos.left,
-              zIndex: 9999,
-            }}
-            onMouseEnter={handleDropdownMouseEnter}
-            onMouseLeave={handleDropdownMouseLeave}
-          >
-            <div className="notification-title">Thông báo</div>
-            {loading ? (
-              <div className="notification-loading">Đang tải...</div>
-            ) : notifications.length === 0 ? (
-              <div className="notification-empty">Không có thông báo nào.</div>
-            ) : (
-              <ul className="notification-list">
-                {notifications.map((n) => (
-                  <li
-                    key={n.noti_id}
-                    className={
-                      "notification-item" + (!n.read_status ? " unread" : "")
-                    }
-                    onClick={() => handleNotificationClick(n.post_id)}
-                  >
-                    <div className="notification-content">{n.message}</div>
-                    <div className="notification-time">
-                      {timeAgo(n.created_at)}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>,
-          document.getElementById("notification-portal")
-        )}
-    
-
-    </div>
+      {contextHolder}
+      <div className="notification-wrap">
+        <button
+          className={className || "notification-bell"}
+          onClick={handleBellClick}
+          ref={bellRef}
+        >
+          <FaBell size={iconSize} className={iconClassName} />
+          {unread > 0 && <span className="notification-badge">{unread}</span>}
+        </button>
+        {open &&
+          createPortal(
+            <div
+              className="notification-dropdown-right animate-fade-in"
+              style={{
+                position: "absolute",
+                top: dropdownPos.top,
+                left: dropdownPos.left,
+                zIndex: 9999,
+              }}
+              onMouseEnter={handleDropdownMouseEnter}
+              onMouseLeave={handleDropdownMouseLeave}
+            >
+              <div className="notification-title">Thông báo</div>
+              {loading ? (
+                <div className="notification-loading">Đang tải...</div>
+              ) : notifications.length === 0 ? (
+                <div className="notification-empty" />
+              ) : (
+                <ul className="notification-list">
+                  {notifications.map((n) => (
+                    <li
+                      key={n.noti_id}
+                      className={
+                        "notification-item" + (!n.read_status ? " unread" : "")
+                      }
+                      onClick={() => handleNotificationClick(n.post_id)}
+                    >
+                      <div className="notification-content">{n.message}</div>
+                      <div className="notification-time">
+                        {timeAgo(n.created_at)}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>,
+            document.getElementById("notification-portal")
+          )}
+      </div>
     </>
   );
 }

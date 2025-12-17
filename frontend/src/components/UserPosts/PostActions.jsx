@@ -3,9 +3,10 @@ import axios from "axios";
 
 export default function PostActions({ post }) {
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(post.like_count);
+  const [likeCount, setLikeCount] = useState(post.like_count || 0);
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    e.stopPropagation(); // Prevent post click
     const updatedLikeCount = liked ? likeCount - 1 : likeCount + 1;
 
     try {
@@ -17,22 +18,42 @@ export default function PostActions({ post }) {
       setLikeCount(updatedLikeCount);
     } catch (err) {
       console.error("Lỗi khi cập nhật like:", err);
-      console.log(err.response.data); // Xem chi tiết lỗi
+      console.log(err.response?.data);
     }
   };
 
   return (
-    <div className="post-actions mt-2 flex items-center gap-3">
-      <button
-        onClick={handleLike}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+    <button
+      onClick={handleLike}
+      className={`
+        flex items-center gap-2 px-3 py-2 rounded-lg 
+        transition-all duration-200 group
+        ${
           liked
-            ? "text-black hover:text-black hover:cursor-pointer"
-            : "text-black hover:bg-white hover:black hover:cursor-pointer"
-        }`}
+            ? ""
+            : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
+        }
+      `}
+      aria-label="Thích"
+    >
+      <span
+        className={`
+          text-xl transition-all duration-200
+          ${liked ? "animate-bounce" : "group-hover:scale-110"}
+        `}
       >
-        {liked ? "❤️" : "🤍"} {likeCount} lượt thích
-      </button>
-    </div>
+        {liked ? "❤️" : "🤍"}
+      </span>
+      <span
+        className={`
+          text-sm font-medium transition-colors duration-200
+          ${
+            liked ? "text-red-500" : "text-gray-600 group-hover:text-purple-600"
+          }
+        `}
+      >
+        {likeCount > 0 ? `${likeCount} lượt thích` : "Thích"}
+      </span>
+    </button>
   );
 }

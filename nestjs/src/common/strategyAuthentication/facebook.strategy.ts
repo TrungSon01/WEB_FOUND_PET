@@ -19,16 +19,22 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name, emails, photos, displayName } = profile;
+    const pictureUrl = `https://graph.facebook.com/${profile.id}/picture?type=large&redirect=false&access_token=${accessToken}`;
+
+    const response = await fetch(pictureUrl);
+    const data = await response.json();
+    const realPhoto = data?.data?.url ?? profile.photos?.[0]?.value ?? null;
+
     const user = {
       provider: 'facebook',
       providerId: profile.id,
-      email: emails?.[0]?.value ?? null,
-      firstName: name?.givenName ?? displayName,
-      lastName: name?.familyName ?? '',
-      picture: photos?.[0]?.value ?? null,
+      email: profile.emails?.[0]?.value ?? null,
+      firstName: profile.name?.givenName ?? profile.displayName,
+      lastName: profile.name?.familyName ?? '',
+      picture: realPhoto,
       accessToken,
     };
+
     done(null, user);
   }
 }

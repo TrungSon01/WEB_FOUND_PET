@@ -30,7 +30,6 @@ export default function LoginPage() {
     toast.success("Đăng nhập thành công");
   };
 
-  // Hàm login với Promise.race (nhanh hơn)
   const handleLogin = async (user) => {
     try {
       console.log("Đang thử đăng nhập qua cả 2 backend...");
@@ -73,7 +72,7 @@ export default function LoginPage() {
 
       // Ưu tiên NestJS nếu cả 2 đều thành công
       const successResult = results.find((r) => r.success) || results[0];
-
+      console.log(successResult);
       if (successResult.success) {
         console.log(`Đăng nhập thành công qua ${successResult.source}`);
         handleLoginSuccess(successResult.data);
@@ -96,7 +95,6 @@ export default function LoginPage() {
       google: "http://localhost:8001/api/authentication/google",
       facebook: "http://localhost:8001/api/authentication/facebook",
       github: "http://localhost:8001/api/authentication/github",
-      instagram: "http://localhost:8001/api/authentication/instagram",
     };
 
     if (socialUrls[type]) {

@@ -10,6 +10,8 @@ import { Prisma } from '@prisma/client';
 import { FunctionSystemService } from 'src/modules/module-system/function-system/function-system.service';
 import axios from 'axios';
 import { app_constant } from 'src/common/constant/app.constant';
+import * as bcrypt from 'bcrypt';
+import { hash } from 'crypto';
 @Injectable()
 export class AuthenticationService {
   constructor(
@@ -68,24 +70,20 @@ export class AuthenticationService {
   async facebookLogin(req: any) {
     const { providerId, email, firstName, lastName, picture } = req.user;
     const username = `${firstName} ${lastName}`;
-
-    // Chuẩn hóa email
+    console.log(req.user);
     const normalizedEmail =
       email && email !== 'null' && email.trim() !== '' ? email : null;
 
-    // 1. Tìm user theo facebook_id trước
     let userExist = await this.prisma.users.findFirst({
       where: { facebook_id: providerId },
     });
 
-    // 2. Nếu chưa có, tìm theo email để merge account
     if (!userExist && normalizedEmail) {
       const userByEmail = await this.prisma.users.findUnique({
         where: { email: normalizedEmail },
       });
 
       if (userByEmail) {
-        // Merge account với transaction + rollback
         try {
           userExist = await this.prisma.$transaction(async (tx) => {
             const updatedUser = await tx.users.update({
@@ -137,8 +135,26 @@ export class AuthenticationService {
       }
     }
 
+    await this.prisma.$transaction(async (tx) => {
+      await tx.users.update({
+        where: {
+          facebook_id: userExist.facebook_id || '',
+        },
+        data: {
+          avatar: picture,
+        },
+      });
+      await axios.patch(
+        `${app_constant.URL_LOGIN_DJANGO}${userExist.user_id}/`,
+        {
+          avatar: picture,
+        },
+      );
+    });
+
     const userReturn =
       this.functionSystem.returnUserWithoutSomeField(userExist);
+
     const tokens = this.tokens.createTokens(userReturn);
     return tokens;
   }
@@ -183,7 +199,6 @@ export class AuthenticationService {
       }
     }
 
-    // 3. Nếu vẫn chưa có user → tạo mới
     if (!userExist) {
       try {
         userExist = await this.prisma.users.create({
@@ -196,7 +211,6 @@ export class AuthenticationService {
           },
         });
 
-        // Sync Django (POST)
         try {
           await axios.post(app_constant.URL_LOGIN_DJANGO, {
             user_id: userExist.user_id,
@@ -207,7 +221,6 @@ export class AuthenticationService {
           });
         } catch (err) {
           console.error('Sync Django error:', err);
-          // Nếu sync fail → rollback ở Prisma
           await this.prisma.users.delete({
             where: { user_id: userExist.user_id },
           });
@@ -219,7 +232,6 @@ export class AuthenticationService {
       }
     }
 
-    // 4. Nếu user tồn tại nhưng chưa có email → update email (GitHub đôi khi không trả email)
     if (
       userExist &&
       email &&
@@ -235,7 +247,6 @@ export class AuthenticationService {
       }
     }
 
-    // 5. Trả về token
     const userReturn =
       this.functionSystem.returnUserWithoutSomeField(userExist);
     const tokens = this.tokens.createTokens(userReturn);
@@ -249,7 +260,8 @@ export class AuthenticationService {
     });
 
     const isNew = !checkUserExist;
-
+    const hashPassword = bcrypt.hashSync(user.password, 10);
+    user.password = hashPassword;
     const finalUser = isNew
       ? await this.prisma.users.create({ data: user })
       : checkUserExist;
@@ -259,7 +271,6 @@ export class AuthenticationService {
 
     console.log('userReturn', userReturn);
 
-    // Sync sang backend Django (chỉ khi tạo user mới)
     if (isNew) {
       try {
         await axios.post(app_constant.URL_LOGIN_DJANGO, {
@@ -296,19 +307,31 @@ export class AuthenticationService {
     const checkUserExist = await this.prisma.users.findFirst({
       where: {
         email: email,
-        password: password,
       },
     });
+    let isMatach = false;
+    if (checkUserExist) {
+      isMatach = bcrypt.compareSync(password, checkUserExist?.password);
+    }
     console.log('checkUsser exisst', checkUserExist);
-    if (!checkUserExist) {
+    if (!checkUserExist || !isMatach) {
       return { user: null, message: 'user not in database', success: false };
     } else {
       const userReturn =
         await this.functionSystem.returnUserWithoutSomeField(checkUserExist);
-
-      return { user: userReturn, message: 'user in database', success: true };
+      const { accessToken, refreshToken } =
+        this.tokens.createTokens(userReturn);
+      delete userReturn.password;
+      return {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        user: userReturn,
+        message: 'user in database',
+        success: true,
+      };
     }
   }
+
   findAll() {
     return `This action returns all authentication`;
   }

@@ -1,11 +1,11 @@
-import { notification } from 'antd';
-import { useEffect } from 'react';
+import { notification } from "antd";
+import { useEffect } from "react";
 
 export const NoticMessage = ({
   message = "Thông báo",
   description = "Không có nội dung",
   pauseOnHover = true,
-  onClickShowPost = () => {}
+  onClickShowPost = () => {},
 }) => {
   const [api, contextHolder] = notification.useNotification();
 
@@ -17,9 +17,9 @@ export const NoticMessage = ({
         pauseOnHover,
         placement: "topRight",
         style: {
-          cursor: "pointer", 
+          cursor: "pointer",
         },
-        onClick: onClickShowPost, 
+        onClick: onClickShowPost,
       });
     }
   }, [message, description]);

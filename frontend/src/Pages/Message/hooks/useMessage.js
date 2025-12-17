@@ -61,11 +61,16 @@ export default function useMessageProfile() {
 
     const handleNewMessage = (message) => {
       console.log("Nhận tin nhắn mới:", message);
+      console.log("Current user ID:", userJson.user_id); // ✅ Thêm log này
+      console.log("Message sender ID:", message.userIdSender); // ✅ Thêm log này
 
       const currentConv = selectedConversationRef.current;
 
       if (currentConv && message.chatGroupId === currentConv.chatGroupId) {
-        setMessages((prev) => [...prev, message]);
+        // ✅ Dùng userJson.user_id thay vì currentUserId
+        if (message.userIdSender !== userJson.user_id) {
+          setMessages((prev) => [...prev, message]);
+        }
       }
 
       loadConversations(userJson.user_id);
@@ -77,7 +82,6 @@ export default function useMessageProfile() {
       offNewMessage(handleNewMessage);
     };
   }, []);
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -143,8 +147,15 @@ export default function useMessageProfile() {
       content: inputMessage.trim(),
     };
 
-    console.log("Gửi tin nhắn:", messageData);
+    const tempMessage = {
+      id: `temp_${Date.now()}`,
+      userIdSender: currentUserId,
+      messageText: inputMessage.trim(),
+      chatGroupId: selectedConversation.chatGroupId,
+      createdAt: new Date().toISOString(),
+    };
 
+    setMessages((prev) => [...prev, tempMessage]);
     setInputMessage("");
 
     sendMessage(messageData);

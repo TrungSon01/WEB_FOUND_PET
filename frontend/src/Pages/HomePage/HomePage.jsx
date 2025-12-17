@@ -1,6 +1,7 @@
 import React, {
   useEffect,
   useState,
+  useRef,
   forwardRef,
   useImperativeHandle,
 } from "react";
@@ -23,6 +24,7 @@ import PostItem from "../../components/UserPosts/PostItem";
 import { getUserById } from "../../apis/userService";
 import PostDetail from "../../components/UserPosts/PostDetail";
 import Notification from "../../components/Notification/Notification";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const customIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
@@ -35,12 +37,40 @@ const HomePage = forwardRef(function HomePage(props, ref) {
   const navigate = useNavigate();
   const { posts, loading } = useSelector((state) => state.postSlice);
   const { user } = useSelector((state) => state.userSlice);
+  const mapRef = useRef(null);
 
-  const [usersMap, setUsersMap] = useState({}); // State để lưu usersMap
+  const [usersMap, setUsersMap] = useState({});
   const [selectedPost, setSelectedPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setSidebarOpen(false); // Auto close sidebar on desktop
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  };
 
   const fetchPosts = () => {
     dispatch(setLoading(true));
@@ -73,7 +103,6 @@ const HomePage = forwardRef(function HomePage(props, ref) {
   const handleSearch = async (query) => {
     if (!query) {
       setIsSearching(false);
-      // Khi query rỗng, fetch lại tất cả bài post
       fetchPosts();
       return;
     }
@@ -121,6 +150,12 @@ const HomePage = forwardRef(function HomePage(props, ref) {
   const handlePostClick = async (post) => {
     setSelectedPost(post);
     setCommentsLoading(true);
+    // Close sidebar on mobile when viewing post detail
+    closeSidebar();
+    // Close any open Leaflet popup so the detail modal isn't blocked
+    if (mapRef.current && typeof mapRef.current.closePopup === "function") {
+      mapRef.current.closePopup();
+    }
     try {
       const res = await getComments(post.id || post.post_id);
       setComments(res);
@@ -151,6 +186,11 @@ const HomePage = forwardRef(function HomePage(props, ref) {
       if (post) {
         setSelectedPost(post);
         setCommentsLoading(true);
+        closeSidebar(); // Close sidebar when opening post detail
+        // Ensure any open popup is closed
+        if (mapRef.current && typeof mapRef.current.closePopup === "function") {
+          mapRef.current.closePopup();
+        }
         try {
           const res = await getComments(post.id || post.post_id);
           setComments(res);
@@ -166,12 +206,38 @@ const HomePage = forwardRef(function HomePage(props, ref) {
 
   return (
     <div className="homepage">
-      <div className="sidebar">
+      {/* Mobile Toggle Button */}
+      {isMobile && (
+        <button
+          className="sidebar-toggle"
+          onClick={toggleSidebar}
+          aria-label="Toggle Sidebar"
+        >
+          {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+        </button>
+      )}
+
+      {/* Overlay for mobile */}
+      {isMobile && (
+        <div
+          className={`sidebar-overlay ${sidebarOpen ? "active" : ""}`}
+          onClick={closeSidebar}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="post-list">
           {loading ? (
-            <div>Đang tải...</div>
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <p>Đang tải...</p>
+            </div>
           ) : posts.length === 0 ? (
-            <div>Không có bài đăng nào.</div>
+            <div className="empty-state">
+              <div className="empty-icon">📭</div>
+              <p>Không có bài đăng nào.</p>
+            </div>
           ) : (
             posts.map((post) => (
               <PostItem
@@ -180,18 +246,21 @@ const HomePage = forwardRef(function HomePage(props, ref) {
                 user={user}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
-                userEmail={usersMap[post.user_id]?.email}
+                userEmail={usersMap[post.user_id]?.username}
                 onClick={handlePostClick}
               />
             ))
           )}
         </div>
       </div>
+
+      {/* Map Container */}
       <div className="map-container">
         <MapContainer
           center={center}
           zoom={15}
           style={{ height: "100vh", width: "100%" }}
+          whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
           scrollWheelZoom={true}
         >
           <TileLayer
@@ -208,22 +277,28 @@ const HomePage = forwardRef(function HomePage(props, ref) {
                   icon={customIcon}
                 >
                   <Popup>
-                    <b>{post.user_id}</b>
-                    <br />
-                    {post.description}
-                    <br />
-                    <button
-                      className="post-detail-button"
-                      onClick={() => handlePostClick(post)}
-                    >
-                      Xem chi tiết
-                    </button>
+                    <div className="popup-content">
+                      <b>
+                        {usersMap[post.user_id]?.username ||
+                          `User #${post.user_id}`}
+                      </b>
+                      <br />
+                      <p className="popup-description">{post.description}</p>
+                      <button
+                        className="post-detail-button"
+                        onClick={() => handlePostClick(post)}
+                      >
+                        Xem chi tiết
+                      </button>
+                    </div>
                   </Popup>
                 </Marker>
               )
           )}
         </MapContainer>
       </div>
+
+      {/* Post Detail Modal */}
       {selectedPost && (
         <PostDetail
           post={selectedPost}

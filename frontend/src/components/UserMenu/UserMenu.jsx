@@ -1,107 +1,140 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Dropdown } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+  MessageOutlined,
+  DashboardOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/userSlice";
 import "./UserMenu.css";
+import { getAvatarUrl } from "../../common/functions/app.function";
+
 export default function UserMenu() {
   const [userInfo, setUserInfo] = useState(null);
+  const [avatarUser, setAvatarUser] = useState("");
   const { user } = useSelector((state) => state.userSlice);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userAccount"));
+    const avatarUser = getAvatarUrl(user?.avatar);
     if (user) {
       setUserInfo(user);
+      const avatarUser = getAvatarUrl(user?.avatar);
+      setAvatarUser(avatarUser);
     }
   }, [user]);
 
   const handleLogout = () => {
-    // 1. Xóa Redux
     dispatch(logoutUser());
-
-    // 2. Xóa localStorage
     localStorage.removeItem("userAccount");
-
-    // 3. Điều hướng về trang login
     navigate("/login");
   };
 
   const items = [
     {
-      key: "1",
+      key: "profile-info",
       label: (
-        <span className="dropdown-item" style={{ animationDelay: "0.1s" }}>
-          Tên: {user?.email || user.username}
-        </span>
+        <div
+          className="dropdown-profile-header"
+          style={{ animationDelay: "0.05s" }}
+        >
+          <div className="profile-avatar-wrapper">
+            {avatarUser ? (
+              <img
+                src={avatarUser}
+                alt="avatar"
+                className="profile-avatar-img"
+              />
+            ) : (
+              <Avatar
+                size={48}
+                icon={<UserOutlined />}
+                className="profile-avatar-default"
+              />
+            )}
+          </div>
+          <div className="profile-info">
+            <div className="profile-name">{user?.username || "Người dùng"}</div>
+            <div className="profile-email">
+              <MailOutlined className="email-icon" />
+              {user?.email || "email@example.com"}
+            </div>
+          </div>
+        </div>
       ),
     },
     {
       type: "divider",
+      style: { margin: "8px 0", backgroundColor: "#E8E4FF" },
     },
     {
       key: "2",
       label: (
-        <span
+        <div
           className="dropdown-item"
           onClick={() => navigate("/profile")}
           style={{ animationDelay: "0.1s" }}
         >
-          Hồ sơ cá nhân
-        </span>
+          <UserOutlined className="item-icon" />
+          <span>Hồ sơ cá nhân</span>
+        </div>
       ),
-    },
-    {
-      type: "divider",
     },
     {
       key: "3",
       label: (
-        <span
+        <div
           className="dropdown-item"
           onClick={() => navigate("/message")}
-          style={{ animationDelay: "0.2s" }}
+          style={{ animationDelay: "0.15s" }}
         >
-          Message
-        </span>
+          <MessageOutlined className="item-icon" />
+          <span>Tin nhắn</span>
+        </div>
       ),
     },
-
+    ...(user?.role === "admin"
+      ? [
+          {
+            key: "4",
+            label: (
+              <div
+                className="dropdown-item"
+                onClick={() =>
+                  (window.location.href =
+                    "http://127.0.0.1:8000/admin/login/?next=/admin/")
+                }
+                style={{ animationDelay: "0.2s" }}
+              >
+                <DashboardOutlined className="item-icon" />
+                <span>Trang quản lý</span>
+              </div>
+            ),
+          },
+        ]
+      : []),
     {
       type: "divider",
+      style: { margin: "8px 0", backgroundColor: "#E8E4FF" },
     },
-    {
-      key: "4",
-      label: (
-        <span
-          className="dropdown-item"
-          onClick={() =>
-            (window.location.href =
-              "http://127.0.0.1:8000/admin/login/?next=/admin/")
-          }
-          style={{ animationDelay: "0.3s" }}
-        >
-          Trang quản lý
-        </span>
-      ),
-    },
-
-    {
-      type: "divider",
-    },
-
     {
       key: "5",
       label: (
-        <span
-          className="dropdown-item"
+        <div
+          className="dropdown-item logout-item"
           onClick={handleLogout}
-          style={{ animationDelay: "0.4s" }}
+          style={{ animationDelay: "0.25s" }}
         >
-          Đăng xuất
-        </span>
+          <LogoutOutlined className="item-icon" />
+          <span>Đăng xuất</span>
+        </div>
       ),
     },
   ];
@@ -109,18 +142,26 @@ export default function UserMenu() {
   if (!user) return null;
 
   return (
-    <div className="flex justify-end p-4">
+    <div className="user-menu-wrapper">
       <Dropdown
         menu={{ items }}
         placement="bottomRight"
-        arrow
+        arrow={{ pointAtCenter: true }}
         trigger={["click"]}
+        overlayClassName="custom-dropdown-overlay"
       >
-        <Avatar
-          size="large"
-          icon={<UserOutlined />}
-          className="cursor-pointer"
-        />
+        <div className="avatar-trigger">
+          {avatarUser ? (
+            <img src={avatarUser} alt="avatar" className="avatar-img" />
+          ) : (
+            <Avatar
+              size={40}
+              icon={<UserOutlined />}
+              className="avatar-default"
+            />
+          )}
+          <div className="avatar-status-dot"></div>
+        </div>
       </Dropdown>
     </div>
   );

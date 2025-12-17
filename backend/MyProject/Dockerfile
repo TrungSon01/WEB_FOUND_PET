@@ -13,6 +13,9 @@ RUN pip install --upgrade pip && \
 # Copy toàn bộ source code
 COPY . .
 
+# Collect static files cho Django admin
+RUN python manage.py collectstatic --noinput
+
 # Mở port 8000
 EXPOSE 8000
 

@@ -94,7 +94,7 @@ export const searchPosts = (query) => {
 
 // function
 export function timeAgo(ts) {
-  const time = new Date(ts).getTime(); // ✅ Chuyển ISO string → timestamp
+  const time = new Date(ts).getTime();
   const now = Date.now();
   const diff = Math.floor((now - time) / 60000); // phút
 

@@ -8,7 +8,7 @@ class Users(models.Model):
     email = models.EmailField(max_length=100,null=True,blank=False,unique=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     password = models.CharField(max_length=255, null=True, blank=True)
-    avatar = models.CharField(max_length=255,default="")
+    avatar = models.CharField(max_length=511,default="")
     role = models.CharField(max_length=50, default='user')
     facebook_id = models.CharField(max_length=255, null=True, blank=True)
     google_id = models.CharField(max_length=255, null=True, blank=True)

@@ -1,0 +1,137 @@
+/* Post Actions & Comment Buttons - Unified Styles */
+
+/* Container for actions */
+.post-item > div.flex.items-center {
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid rgba(148, 91, 255, 0.1);
+}
+
+/* Unified button styles */
+.post-item button[aria-label="Thích"],
+.post-item button[aria-label="Bình luận"] {
+  position: relative;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.post-item button[aria-label="Thích"]:hover,
+.post-item button[aria-label="Bình luận"]:hover {
+  border-color: rgba(148, 91, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(148, 91, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.post-item button[aria-label="Thích"]:active,
+.post-item button[aria-label="Bình luận"]:active {
+  transform: translateY(0);
+}
+
+/* Like button specific - when liked */
+.post-item button[aria-label="Thích"].bg-gradient-to-r {
+  border-color: rgba(239, 68, 68, 0.2);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+/* Ripple effect on click */
+.post-item button[aria-label="Thích"]::after,
+.post-item button[aria-label="Bình luận"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  background: radial-gradient(
+    circle,
+    rgba(148, 91, 255, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.post-item button[aria-label="Thích"]:active::after,
+.post-item button[aria-label="Bình luận"]:active::after {
+  opacity: 1;
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Emoji/Icon animations */
+@keyframes heartBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1.15);
+  }
+}
+
+.post-item button[aria-label="Thích"] span:first-child {
+  display: inline-block;
+}
+
+.post-item button[aria-label="Thích"].bg-gradient-to-r span:first-child {
+  animation: heartBeat 0.5s ease;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .post-item > div.flex.items-center {
+    gap: 8px;
+  }
+
+  .post-item button[aria-label="Thích"],
+  .post-item button[aria-label="Bình luận"] {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .post-item button span.text-sm {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ẩn text, chỉ hiện icon + số */
+  .post-item button[aria-label="Bình luận"] span {
+    display: none;
+  }
+
+  .post-item button[aria-label="Thích"] span:last-child {
+    font-size: 11px;
+  }
+
+  .post-item button[aria-label="Thích"],
+  .post-item button[aria-label="Bình luận"] {
+    padding: 6px 8px;
+  }
+}
+
+@media (min-width: 360px) {
+  .post-item button[aria-label="Bình luận"] span {
+    display: inline;
+  }
+}
+
+/* Smooth transitions */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

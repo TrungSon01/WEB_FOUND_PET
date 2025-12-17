@@ -13,6 +13,7 @@ import { Popconfirm } from "antd";
 import "./PostHeader.css";
 import toast from "react-hot-toast";
 import { CLOUNDINARY_IMAGE_URL } from "../../common/url/url.common";
+import { getAvatarUrl } from "../../common/functions/app.function";
 export default function PostHeader({
   post,
   userEmail,
@@ -30,10 +31,9 @@ export default function PostHeader({
     if (post?.user_id) {
       getUserById(post.user_id)
         .then((res) => {
-          console.log("res", res);
           setUsername(res.username);
           if (res.data.avatar !== "") {
-            setAvatarUser(`${CLOUNDINARY_IMAGE_URL}/${res.data.avatar}`);
+            setAvatarUser(getAvatarUrl(res.data.avatar));
           }
         })
         .catch((err) => {
@@ -76,6 +76,7 @@ export default function PostHeader({
           >
             {post?.username ||
               post?.author_name ||
+              post?.email ||
               userEmail ||
               `Người dùng #${post?.user_id}`}
           </div>
